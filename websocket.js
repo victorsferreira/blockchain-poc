@@ -1,14 +1,15 @@
 const ws = require('ws');
 var websocket = null;
 
-class WebSocket{
-  constructor(port, peers){
-    console.log('websocket created');
+class WebSocket {
+  constructor(port, peers, handler) {
+    console.log('WebSocket created.', 'Port: ', port);
 
     this.sockets = [];
-    this.server = new ws.Server({port: port});
+    this.server = new ws.Server({ port: port });
+    this.handler = handler;
 
-    this.server.on('connection', (socket)=>{
+    this.server.on('connection', (socket) => {
       console.log('connection')
       this.connect(socket);
     });
@@ -16,35 +17,34 @@ class WebSocket{
     peers.forEach((peer) => {
       var socket = new ws(peer);
 
-      socket.on('open', ()=>{
+      socket.on('open', () => {
         console.log('open');
         this.connect(socket);
       });
 
-      socket.on('error', () => {
-        console.log('connection failed')
+      socket.on('error', (err) => {
+        console.log('connection failed', err)
       });
     });
   }
 
-  function write(socket, message){
+  write(socket, message) {
     socket.send(JSON.stringify(message));
   }
 
-  function broadcast(message){
+  broadcast(message) {
     this.sockets.forEach(socket => write(socket, message));
   }
 
-  connect(ws){
+  connect(ws) {
     this.sockets.push(ws);
 
     ws.on('message', (data) => {
       var message = JSON.parse(data);
-      console.log('Received message' + JSON.stringify(message));
-      // handle
+      this.handler(message);
     });
 
-    ws.on('close', () =>{
+    ws.on('close', () => {
       this.disconnect(ws);
     });
 
@@ -53,12 +53,12 @@ class WebSocket{
     });
   }
 
-  disconnect(ws){
+  disconnect(ws) {
     this.sockets.splice(this.sockets.indexOf(ws), 1);
   }
 }
 
-module.export = function(port, peers){
-  if(!websocket) websocket = new WebSocket(port, peers || []);
+module.exports = function (port, peers, handler) {
+  if (!websocket) websocket = new WebSocket(port, peers || [], handler);
   return websocket;
 };

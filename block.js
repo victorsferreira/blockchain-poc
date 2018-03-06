@@ -1,21 +1,30 @@
 const POW = require('./pow');
 
 class Block {
-  constructor(previous_hash, data = '') {
+  constructor(data, previous_hash) {
     this.hash = '';
-    this.previous_hash = previous_hash;
-    this.data = this.setData(data);
+    this.previous_hash = previous_hash;    
     this.timestamp = Date.now();
     this.nonce = '';
+
+    this.setData(data);
   }
 
-  generateProofOfWork(difficulty=3) {
-    POW.generate(input, difficulty);
-  }
+  // generateProofOfWork(difficulty = 3) {
+  //   POW.generate(input, difficulty);
+  // }
 
-  setData(data){
-    if(typeof(data) === 'object') data = JSON.stringify(data);
+  setData(data) {
+    if (typeof (data) === 'object') data = JSON.stringify(data);
     this.data = data;
+  }
+
+  setHash(hash) {
+    this.hash = hash;
+  }
+
+  setNonce(nonce) {
+    this.nonce = nonce;
   }
 }
 
