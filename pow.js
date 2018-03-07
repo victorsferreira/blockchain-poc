@@ -1,7 +1,9 @@
 const createHash = require('crypto').createHash;
 
 class POW {
-  static generate(input, difficulty=3) {
+  static generate(previous_hash, data, difficulty=3) {
+    let input = previous_hash + data;
+
     var id = POW.generateId();
     let sample = Array(difficulty).fill('0').join('');
     let hash = '', nonce = '';

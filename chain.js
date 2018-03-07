@@ -16,30 +16,31 @@ class Chain {
   }
 
   setGenesisBlock() {
-    let block = new Block('', '');
-    let pow = POW.generateFromBlock(block, this.difficulty);
-    
-    block.setHash(pow.hash);
-    block.setNonce(pow.nonce);
-    console.log('proof of work generated', pow)
+    let data = '', previous_hash = '';
+    let pow = POW.generate(data, previous_hash, this.difficulty);
+    let block = new Block(data, previous_hash, pow.nonce, pow.hash);
 
-    this.itens = [block]; 
+    this.itens = [block];
   }
 
-  createBlock(data){
-    let pow_start_timestamp = Date.now();
-    console.log('Creating a new block from: ', data);
-    let latest_block = this.getLatestBlock();
-    let block = new Block(data, latest_block.hash);
-    console.log('Generating a Proof of Work: ', pow_start_timestamp);
-    let pow = POW.generateFromBlock(block, this.difficulty);
-    console.log('Proof of Work was found: ', (Date.now() - pow_start_timestamp) / 1000, 'seconds');
-    
-    block.setHash(pow.hash);
-    block.setNonce(pow.nonce);
-
-    this.itens.push(block);
+  addBlock(block) {
+    if (this.verifyBlockValidity(block)) {
+      this.itens.push(block);
+    }
   }
+
+  verifyBlockValidity(block) {
+    return true;
+  }
+
+  // createBlock(data){
+  //   let latest_block = this.getLatestBlock();
+  //   let pow = POW.generate(data, latest_block.hash, this.difficulty);
+
+  //   let block = new Block(data, latest_block.hash, pow.nonce, pow.hash);
+
+  //   this.itens.push(block);
+  // }
 }
 
 module.exports = function () {

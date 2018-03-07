@@ -23,9 +23,29 @@ if (ARGS.peers) {
   });
 }
 
+const transactions = [];
 var blockchain = chain();
-var socket = websocket(parseInt(ARGS.port) + 1, ARGS.peers, (message) => {
+var socket = websocket(parseInt(ARGS.port), ARGS.peers, (message) => {
   console.log('Message', message)
+
+  let type = message.type;
+  switch (type) {
+    case 'BLOCKCHAIN': {
+
+    }
+
+    case 'LATEST_BLOCK': {
+
+    }
+
+    case 'NEW_BLOCK': {
+
+    }
+
+    case 'NEW_TRANSACTION': {
+      transactions.push(message.payload.transaction);
+    }
+  }
 });
 
 // setTimeout(() => {
