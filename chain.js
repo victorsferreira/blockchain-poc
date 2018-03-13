@@ -19,7 +19,6 @@ class Chain {
     let data = '', previous_hash = '';
     let pow = POW.generate(data, previous_hash, this.difficulty);
     let block = new Block(data, previous_hash, pow.nonce, pow.hash);
-
     this.itens = [block];
   }
 
@@ -33,14 +32,17 @@ class Chain {
     return true;
   }
 
-  // createBlock(data){
-  //   let latest_block = this.getLatestBlock();
-  //   let pow = POW.generate(data, latest_block.hash, this.difficulty);
+  createBlock(data){
+    if(typeof(data) === 'object') data = JSON.stringify(data);
+    let latest_block = this.getLatestBlock();
+    let pow = POW.generate(data, latest_block.hash, this.difficulty);
 
-  //   let block = new Block(data, latest_block.hash, pow.nonce, pow.hash);
+    let block = new Block(data, latest_block.hash, pow.nonce, pow.hash);
+    console.log('Block created');
 
-  //   this.itens.push(block);
-  // }
+    this.itens.push(block);
+    return block;
+  }
 }
 
 module.exports = function () {

@@ -25,10 +25,10 @@ if (ARGS.peers) {
 
 const transactions = [];
 var blockchain = chain();
-var socket = websocket(parseInt(ARGS.port), ARGS.peers, (message) => {
-  console.log('Message', message)
 
-  let type = message.type;
+var socket = websocket(parseInt(ARGS.port), ARGS.peers, (type, payload) => {
+  console.log('Message', type, payload);
+
   switch (type) {
     case 'BLOCKCHAIN': {
 
@@ -43,13 +43,9 @@ var socket = websocket(parseInt(ARGS.port), ARGS.peers, (message) => {
     }
 
     case 'NEW_TRANSACTION': {
-      transactions.push(message.payload.transaction);
+
     }
   }
 });
 
-// setTimeout(() => {
-//   blockchain.itens.push(1);
-//   blockchain.itens.push(31);
-//   blockchain.itens.push(15);
-// }, 3000)
+const running_server = server(parseInt(ARGS.port)+1, blockchain, socket);
